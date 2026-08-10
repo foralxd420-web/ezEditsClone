@@ -16,7 +16,7 @@ commands:
     description: Tworzenie linii i łuków
     permission: ezedits.admin
   eztexture:
-    description: Teksturowanie światłem i wysokością
+    description: Teksturowanie światłem, wysokością i widokiem gracza
     permission: ezedits.admin
     aliases: [ezt]
 
