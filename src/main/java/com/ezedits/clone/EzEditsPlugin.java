@@ -108,11 +108,11 @@ public class EzEditsPlugin extends JavaPlugin implements CommandExecutor {
             }
             return true;
         }
-
-        // --- OBSŁUGA /EZTEXTURE (/EZT) ---
+}
+// --- OBSŁUGA /EZTEXTURE (/EZT) ---
         if (cmd.getName().equalsIgnoreCase("eztexture")) {
             if (args.length < 2) {
-                bPlayer.sendMessage(ChatColor.RED + "Uzycie: /eztexture <sunlight|height> <nazwa_palety>");
+                bPlayer.sendMessage(ChatColor.RED + "Uzycie: /eztexture <sunlight|height|view> <nazwa_palety>");
                 return true;
             }
             String sub = args[0].toLowerCase();
@@ -128,6 +128,9 @@ public class EzEditsPlugin extends JavaPlugin implements CommandExecutor {
                     } else if (sub.equals("height")) {
                         count = TextureEngine.applyHeightTexture(session, selection, paletteManager, pName);
                         bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Nałożono teksturę wysokościową na " + count + " bloków!");
+                    } else if (sub.equals("view")) {
+                        count = TextureEngine.applyViewTexture(session, selection, world, bPlayer.getWorld(), bPlayer, paletteManager, pName);
+                        bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Nałożono teksturę perspektywy na " + count + " bloków (widoczne dla Ciebie)!");
                     }
                 }
             } catch (Exception e) {
@@ -135,54 +138,3 @@ public class EzEditsPlugin extends JavaPlugin implements CommandExecutor {
             }
             return true;
         }
-
-        return false;
-    }
-
-    private void applyPaletteToSelection(Player actor, World world, String pName, org.bukkit.entity.Player bPlayer) {
-        try {
-            Region selection = WorldEdit.getInstance().getSessionManager().get(actor).getSelection(world);
-            try (EditSession session = WorldEdit.getInstance().newEditSession(world)) {
-                for (BlockVector3 pt : selection) {
-                    session.setBlock(pt, paletteManager.getRandomBlock(pName));
-                }
-                bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Zastosowano palete na zaznaczeniu!");
-            }
-        } catch (Exception e) {
-            bPlayer.sendMessage(ChatColor.RED + "Bledne lub brakujace zaznaczenie WorldEdit!");
-        }
-    }
-
-    private void applyNoiseToSelection(Player actor, World world, double scale, String pName, org.bukkit.entity.Player bPlayer) {
-        try {
-            Region selection = WorldEdit.getInstance().getSessionManager().get(actor).getSelection(world);
-            try (EditSession session = WorldEdit.getInstance().newEditSession(world)) {
-                for (BlockVector3 pt : selection) {
-                    double noise = NoiseGenerator.getNoise3D(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ(), scale);
-                    if (noise > 0.55) {
-                        session.setBlock(pt, paletteManager.getRandomBlock(pName));
-                    }
-                }
-                bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Wygenerowano strukture szumu!");
-            }
-        } catch (Exception e) {
-            bPlayer.sendMessage(ChatColor.RED + "Bledne lub brakujace zaznaczenie WorldEdit!");
-        }
-    }
-
-    private void renderSpline(World world, List<BlockVector3> points, String pName, org.bukkit.entity.Player bPlayer) {
-        List<BlockVector3> line = SplineCalculator.calculateLine(points);
-        if (line.isEmpty()) {
-            bPlayer.sendMessage(ChatColor.RED + "Dodaj najpierw minimum 2 punkty za pomoca /ezspline addpos");
-            return;
-        }
-        try (EditSession session = WorldEdit.getInstance().newEditSession(world)) {
-            for (BlockVector3 pt : line) {
-                session.setBlock(pt, paletteManager.getRandomBlock(pName));
-            }
-            bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Wygenerowano linie Spline (" + line.size() + " blokow)!");
-        } catch (Exception e) {
-            bPlayer.sendMessage(ChatColor.RED + "Blad podczas generowania linii!");
-        }
-    }
-}
