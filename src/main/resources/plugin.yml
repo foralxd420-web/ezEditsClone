@@ -6,18 +6,19 @@ depend: [WorldEdit]
 
 commands:
   ezpalette:
-    description: Zarządzanie paletami bloków (ezEdits)
+    description: Zarządzanie paletami bloków
     permission: ezedits.admin
     aliases: [ezp]
   eznoise:
-    description: Generowanie struktur szumu i tekstur
+    description: Generowanie struktur szumu
     permission: ezedits.admin
   ezspline:
-    description: Tworzenie linii i kształtów wzdłuż punktów
+    description: Tworzenie linii i łuków
     permission: ezedits.admin
-  ezflow:
-    description: Generowanie ciągów i przepływów bloków
+  eztexture:
+    description: Teksturowanie światłem i wysokością
     permission: ezedits.admin
+    aliases: [ezt]
 
 permissions:
   ezedits.admin:
