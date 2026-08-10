@@ -3,6 +3,7 @@ package com.ezedits.clone;
 import com.ezedits.clone.noise.NoiseGenerator;
 import com.ezedits.clone.palettes.PaletteManager;
 import com.ezedits.clone.spline.SplineCalculator;
+import com.ezedits.clone.texture.TextureEngine;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -29,7 +30,7 @@ public class EzEditsPlugin extends JavaPlugin implements CommandExecutor {
         Objects.requireNonNull(getCommand("ezpalette")).setExecutor(this);
         Objects.requireNonNull(getCommand("eznoise")).setExecutor(this);
         Objects.requireNonNull(getCommand("ezspline")).setExecutor(this);
-        Objects.requireNonNull(getCommand("ezflow")).setExecutor(this);
+        Objects.requireNonNull(getCommand("eztexture")).setExecutor(this);
         getLogger().info("ezEditsClone zostal pomyslnie wlaczony!");
     }
 
@@ -61,7 +62,7 @@ public class EzEditsPlugin extends JavaPlugin implements CommandExecutor {
                 if (paletteManager.addBlock(pName, handBlock, weight)) {
                     bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Dodano blok do palety " + pName);
                 } else {
-                    bPlayer.sendMessage(ChatColor.RED + "[ezEdits] Paleta o takiej nazwie nie istnieje!");
+                    bPlayer.sendMessage(ChatColor.RED + "[ezEdits] Paleta nie istnieje!");
                 }
             } else if (sub.equals("apply")) {
                 applyPaletteToSelection(actor, world, pName, bPlayer);
@@ -104,6 +105,33 @@ public class EzEditsPlugin extends JavaPlugin implements CommandExecutor {
                     return true;
                 }
                 renderSpline(world, splinePoints.get(id), args[1].toLowerCase(), bPlayer);
+            }
+            return true;
+        }
+
+        // --- OBSŁUGA /EZTEXTURE (/EZT) ---
+        if (cmd.getName().equalsIgnoreCase("eztexture")) {
+            if (args.length < 2) {
+                bPlayer.sendMessage(ChatColor.RED + "Uzycie: /eztexture <sunlight|height> <nazwa_palety>");
+                return true;
+            }
+            String sub = args[0].toLowerCase();
+            String pName = args[1].toLowerCase();
+
+            try {
+                Region selection = WorldEdit.getInstance().getSessionManager().get(actor).getSelection(world);
+                try (EditSession session = WorldEdit.getInstance().newEditSession(world)) {
+                    int count = 0;
+                    if (sub.equals("sunlight")) {
+                        count = TextureEngine.applySunlightTexture(session, selection, world, paletteManager, pName);
+                        bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Nałożono teksturę światła słonecznego na " + count + " bloków!");
+                    } else if (sub.equals("height")) {
+                        count = TextureEngine.applyHeightTexture(session, selection, paletteManager, pName);
+                        bPlayer.sendMessage(ChatColor.GREEN + "[ezEdits] Nałożono teksturę wysokościową na " + count + " bloków!");
+                    }
+                }
+            } catch (Exception e) {
+                bPlayer.sendMessage(ChatColor.RED + "Zaznacz najpierw obszar WorldEdit!");
             }
             return true;
         }
