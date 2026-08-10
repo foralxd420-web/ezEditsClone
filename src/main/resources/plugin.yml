@@ -1,0 +1,24 @@
+name: ezEditsClone
+version: 1.0.0
+main: com.ezedits.clone.EzEditsPlugin
+api-version: '1.21'
+depend: [WorldEdit]
+
+commands:
+  ezpalette:
+    description: Zarządzanie paletami bloków (ezEdits)
+    permission: ezedits.admin
+    aliases: [ezp]
+  eznoise:
+    description: Generowanie struktur szumu i tekstur
+    permission: ezedits.admin
+  ezspline:
+    description: Tworzenie linii i kształtów wzdłuż punktów
+    permission: ezedits.admin
+  ezflow:
+    description: Generowanie ciągów i przepływów bloków
+    permission: ezedits.admin
+
+permissions:
+  ezedits.admin:
+    default: op
